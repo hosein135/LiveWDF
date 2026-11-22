@@ -27,5 +27,10 @@ CMakeUserPresets.json
 # Scratch workspace
 scratch/
 
+# Nix (run.sh / flake)
+.livewdf-bootstrap/
+result
+result-*
+
 # Session documentation and evidence stay on disk, out of VCS
 docs/
