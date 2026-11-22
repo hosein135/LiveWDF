@@ -1658,7 +1658,9 @@ livewdf_ensure_flake_git_files() {
     return 0
   fi
 
-  # Restore a path flake.nix names with ./ that is missing from the work tree.
+  # Restore a Nix path literal flake.nix imports (${./file}). Shell text
+  # such as ./tests/editor/livewdf_editor_tests is a build output, not a
+  # source file this repository must contain.
   while IFS= read -r rel; do
     [ -n "${rel}" ] || continue
     f="${SCRIPT_DIR}/${rel}"
@@ -1674,9 +1676,8 @@ livewdf_ensure_flake_git_files() {
     fi
   done < <(
     grep -vE '^[[:space:]]*#' "${SCRIPT_DIR}/flake.nix" \
-      | grep -oE '\./[-A-Za-z0-9_./]+' \
-      | sed 's|^\./||' \
-      | sed 's|/$||' \
+      | grep -oE '\$\{\./[-A-Za-z0-9_./]+\}' \
+      | sed -E 's/^\$\{\.\///; s/\}$//; s|/$||' \
       | sort -u
   )
 }
